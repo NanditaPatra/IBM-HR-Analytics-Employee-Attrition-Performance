@@ -100,13 +100,4 @@ Certainly! Here are some sample SQL project questions based on the IBM HR Analyt
         WHERE YEARSATCOMPANY >10 AND JOBSATISFACTION >3
         ORDER BY YEARSATCOMPANY DESC;
 
-6. **Correlation Analysis:**
-   - Determine if there is a correlation between job satisfaction (JobSatisfaction) and monthly income (MonthlyIncome).
-       --
-
-
-
-   - Investigate whether employees who have more years of experience (TotalWorkingYears) tend to have higher job satisfaction.
-   - Check if employees with a higher performance rating (PerformanceRating) tend to have lower attrition rates.
-
 These questions cover a range of SQL operations including basic queries, data exploration, aggregation, filtering, and correlation analysis, which are typical in SQL projects analyzing HR datasets like the IBM HR Analytics Employee Attrition and Performance dataset.
