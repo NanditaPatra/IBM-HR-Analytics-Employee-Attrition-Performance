@@ -1,4 +1,4 @@
-Certainly! Here are some sample SQL project questions based on the IBM HR Analytics Employee Attrition and Performance dataset:
+Here are some sample SQL project questions based on the IBM HR Analytics Employee Attrition and Performance dataset:
 
 1. **Basic Queries:**
    - How many records are there in the dataset?
