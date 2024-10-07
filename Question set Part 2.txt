@@ -1,0 +1,170 @@
+Sure, here are some SQL project questions based on the dataset columns provided:
+
+1. **Basic Data Exploration:**
+   - How many records are there in the dataset?
+   - What are the distinct values for 'Attrition', 'Business Travel', 'Department', 'Education Field', 'Gender', and 'Job Role'?
+
+2. **Data Analysis:**
+   - What is the average age of employees in the dataset?
+   - How many employees are there for each 'Job Role'?
+      --Select Jobrole, Count(*) as Emp_count
+        from employee
+        group by jobrole;
+
+   - What is the average 'Daily Rate', 'Monthly Income', and 'Hourly Rate'?
+      --select avg(DAILYRATE), avg(MONTHLYINCOME), avg(HOURLYRATE)
+        from EMPLOYEE;
+
+   - Which department has the highest average 'Years at Company'?
+      --select DEPARTMENT, round(AVG(YEARSATCOMPANY),2) AS AVG_YEARS_AT_COMPANY
+        from EMPLOYEE
+        group by DEPARTMENT
+        limit 1;
+
+3. **Filtering and Sorting:**
+   - How many employees have 'Attrition' as 'Yes'?
+      --
+   - List the employees who have 'Monthly Income' greater than equal to $15,000.
+      --select EMPLOYEENUMBER, MONTHLYINCOME
+        from EMPLOYEE
+        where MONTHLYINCOME >= 15000;
+
+   - Which employees have worked in more than 5 companies ('Number of Companies Worked' > 5)? Sort it in descending order.
+      --SELECT EMPLOYEENUMBER, NUMCOMPANIESWORKED
+        FROM EMPLOYEE
+        WHERE NUMCOMPANIESWORKED > 5
+        ORDER BY NUMCOMPANIESWORKED DESC;
+
+
+4. **Aggregation:**
+   - Calculate the total 'Monthly Income' for the company.
+      --SELECT SUM(MONTHLYINCOME) AS TOTAL_MONTHLYINCOME
+        FROM EMPLOYEE;
+
+   - Find the maximum 'Years at Company' and minimum 'Years at Company'.
+      --
+   - What is the average 'Performance Rating' by 'Job Role'?
+      --SELECT JOBROLE, ROUND(AVG(PERFORMANCERATING),2) AS AVG_PERFORMANCE_RATING
+        FROM EMPLOYEE
+        GROUP BY JOBROLE;
+
+5. **Join Operations:**
+   - Merge this dataset with another dataset (if provided) using 'Employee Number' as the key.
+   - Join this dataset with itself to find pairs of employees who have the same 'Job Role'.
+
+6. **Data Transformation:**
+   - Create a new column 'Age Group' categorizing employees as 'Young' (<= 30), 'Middle-aged' (31-50), and 'Senior' (> 50).
+      --SELECT EMPLOYEENUMBER, AGE,
+         CASE
+           WHEN AGE <= 30 THEN "YOUNG"
+           WHEN AGE BETWEEN 31 AND 50 THEN "MIDDLE-AGED"
+           ELSE "SENIOR"
+         END AS "AGE_GROUP"
+        FROM EMPLOYEE;
+
+   - Convert 'Monthly Income' from USD to another currency if exchange rates are provided.
+      --
+7. **Advanced Queries:**
+   - Identify employees who have had more than one promotion in the last 5 years ('Years since Last Promotion' < 5).
+   - Calculate the retention rate (percentage of employees who have 'Attrition' as 'No').
+      --WITH T1 AS (SELECT COUNT(*) AS EMP_NOT_LEFT FROM EMPLOYEE WHERE ATTRITION = "NO"),
+             T2 AS (SELECT COUNT(*) AS TOTAL_EMP_COUNT FROM EMPLOYEE)
+        SELECT CONCAT(ROUND((T1.EMP_NOT_LEFT/T2.TOTAL_EMP_COUNT)*100,2),"%") AS RETENTION_RATE
+        FROM T1,T2;
+
+   - Determine the average 'Total Working Years' for employees with a 'Performance Rating' of 4.
+      --SELECT ROUND(AVG(TOTALWORKINGYEARS),2) AS AVG_WORKING_YEARS
+        FROM EMPLOYEE
+        WHERE PERFORMANCERATING = 4;
+
+
+These questions cover a range of SQL operations from basic querying and aggregation to more complex transformations and joins, providing a comprehensive basis for exploring and analyzing the dataset.
+
+
+Certainly! Let's dive into more advanced SQL queries based on the dataset columns provided:
+
+1. **Window Functions and Ranking:**
+   - Rank employees based on their 'Monthly Income' within each 'Job Role'. Display their 'Employee Number', 'Job Role', and rank <=10.
+      --SELECT T1.EMPLOYEENUMBER, T1.JOBROLE, T1.RANK_NUM
+        FROM (SELECT EMPLOYEENUMBER, JOBROLE, RANK() OVER (PARTITION BY JOBROLE ORDER BY MONTHLYINCOME DESC) AS RANK_NUM
+              FROM EMPLOYEE) AS T1
+        WHERE RANK_NUM <= 10;
+
+   - Calculate the cumulative sum of 'Monthly Income' for employees, partitioned by 'Department' and ordered by 'Years at Company'.
+      --SELECT DEPARTMENT, YEARSATCOMPANY, MONTHLYINCOME,
+        SUM(MONTHLYINCOME) OVER (PARTITION BY DEPARTMENT ORDER BY YEARSATCOMPANY) AS CUMM_SUM
+        FROM EMPLOYEE;
+
+   - Determine the top 5 employees with the highest 'Percent Salary Hike' in each 'Job Role'.
+      --WITH T1 AS (SELECT EMPLOYEENUMBER, JOBROLE, PERCENTSALARYHIKE,
+            DENSE_RANK () OVER (PARTITION BY JOBROLE ORDER BY PERCENTSALARYHIKE DESC) AS RANK_NUM,
+            ROW_NUMBER() OVER (PARTITION BY JOBROLE ORDER BY PERCENTSALARYHIKE DESC) AS ROW_NO
+            FROM EMPLOYEE)
+        SELECT EMPLOYEENUMBER, JOBROLE, PERCENTSALARYHIKE
+        FROM T1
+        WHERE ROW_NO <= 5;
+
+2. **Subqueries and Correlated Queries:**
+   - Find employees whose 'Total Working Years' exceed the average 'Total Working Years' across all employees.
+      --SELECT EMPLOYEENUMBER, TOTALWORKINGYEARS
+        FROM EMPLOYEE
+        WHERE TOTALWORKINGYEARS > (SELECT ROUND(AVG(TOTALWORKINGYEARS),2) AS AVG_TOTAL_WORKINGYEARS
+						FROM EMPLOYEE);
+
+   - Identify employees whose 'Monthly Income' is within 15% of the maximum 'Monthly Income' in their respective 'Job Role'.
+      --SELECT EMPLOYEENUMBER, JOBROLE, MONTHLYINCOME, INCOMERANGE
+        FROM (SELECT EMPLOYEENUMBER, JOBROLE, MONTHLYINCOME, ROUND((15*MAX_INCOME)/100,2) AS INCOMERANGE
+              FROM (SELECT EMPLOYEENUMBER, JOBROLE, MONTHLYINCOME,
+                    MAX(MONTHLYINCOME) OVER (PARTITION BY JOBROLE) AS MAX_INCOME
+		   FROM EMPLOYEE) AS T1) AS T2
+        WHERE MONTHLYINCOME <= INCOMERANGE;
+
+   - List employees who have had the highest 'Performance Rating' within each 'Department'.
+      --SELECT EMPLOYEENUMBER, DEPARTMENT
+        FROM (SELECT EMPLOYEENUMBER, DEPARTMENT, PERFORMANCERATING, MAX(PERFORMANCERATING) OVER (PARTITION BY DEPARTMENT) AS MAX_PER_RATING
+              FROM EMPLOYEE) AS T1
+        WHERE PERFORMANCERATING = MAX_PER_RATING;
+
+3. **Pivoting and Unpivoting:**
+   - Pivot the data to display average 'Job Satisfaction', 'Environment Satisfaction', and 'Relationship Satisfaction' for each 'Marital Status'.
+      --SELECT MARITALSTATUS, ROUND(AVG(JOBSATISFACTION),2) AS AVG_JOBSAT, ROUND(AVG(ENVIRONMENTSATISFACTION),2) AS AVG_ENVSAT,
+               ROUND(AVG(RELATIONSHIPSATISFACTION),2) AS AVG_RELSAT
+        FROM EMPLOYEE
+        GROUP BY MARITALSTATUS;
+
+   - Unpivot the data to transform columns 'Job Involvement', 'Job Satisfaction', 'Performance Rating', and 'Relationship Satisfaction' into rows.
+      --
+4. **Conditional Aggregation and Case Statements:**
+   - Calculate the average 'Monthly Income' for employees based on their 'Education Field', grouped into categories ('STEM', 'Business', 'Arts', etc.).
+      --SELECT EDUCATIONFIELD, 
+        CASE
+          WHEN EDUCATIONFIELD = "HUMAN RESOURCES" THEN "BUSINESS"
+          WHEN EDUCATIONFIELD = "LIFE SCIENCES" THEN "STEM"
+          WHEN EDUCATIONFIELD = "MARKETING" THEN "BUSINESS"
+          WHEN EDUCATIONFIELD = "MEDICAL" THEN "STEM"
+          WHEN EDUCATIONFIELD = "TECHNICAL DEGREE" THEN "STEM"
+          ELSE "OTHER"
+       END AS CATEGORY, ROUND(AVG(MONTHLYINCOME),2) AS AVG_MONTHLYINCOME
+       FROM EMPLOYEE
+       GROUP BY EDUCATIONFIELD;
+
+   - Determine the percentage of employees who work 'Overtime' by 'Job Role'.
+      --WITH T1 AS (SELECT JOBROLE, COUNT(*) AS TOTAL_EMPCOUNT
+                    FROM EMPLOYEE
+                    GROUP BY JOBROLE),
+             T2 AS (SELECT JOBROLE, COUNT(*) AS OVERTIME_COUNT
+                    FROM EMPLOYEE
+                    WHERE OVERTIME = "YES"
+                    GROUP BY JOBROLE)
+      SELECT T1.JOBROLE, ROUND((T2.OVERTIME_COUNT/T1.TOTAL_EMPCOUNT)*100,2) AS OVERTIME_PERCENTAGE
+      FROM T1
+      JOIN T2
+        ON T1.JOBROLE = T2.JOBROLE;
+
+5. **Recursive Queries (if applicable):**
+   - If the dataset includes hierarchical data (e.g., manager-subordinate relationships), perform a recursive query to find all employees reporting to a specific manager.
+
+6. **Handling Nulls and Advanced Filtering:**
+   - Identify employees with missing values ('Null') in any critical columns (e.g., 'Monthly Income', 'Years at Company'). Assess the impact on analysis and suggest potential handling strategies.
+
+These advanced queries leverage SQL features such as window functions, subqueries, pivoting, conditional aggregation, and recursive queries where applicable, offering deeper insights and analysis capabilities into the dataset. Adjust the specifics based on your dataset's characteristics and additional requirements.
