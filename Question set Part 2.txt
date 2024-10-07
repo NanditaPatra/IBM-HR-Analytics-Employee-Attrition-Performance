@@ -1,4 +1,4 @@
-Sure, here are some SQL project questions based on the dataset columns provided:
+Here are some SQL project questions based on the dataset columns provided:
 
 1. **Basic Data Exploration:**
    - How many records are there in the dataset?
@@ -62,8 +62,7 @@ Sure, here are some SQL project questions based on the dataset columns provided:
          END AS "AGE_GROUP"
         FROM EMPLOYEE;
 
-   - Convert 'Monthly Income' from USD to another currency if exchange rates are provided.
-      --
+   
 7. **Advanced Queries:**
    - Identify employees who have had more than one promotion in the last 5 years ('Years since Last Promotion' < 5).
    - Calculate the retention rate (percentage of employees who have 'Attrition' as 'No').
@@ -81,7 +80,7 @@ Sure, here are some SQL project questions based on the dataset columns provided:
 These questions cover a range of SQL operations from basic querying and aggregation to more complex transformations and joins, providing a comprehensive basis for exploring and analyzing the dataset.
 
 
-Certainly! Let's dive into more advanced SQL queries based on the dataset columns provided:
+Let's dive into more advanced SQL queries based on the dataset columns provided:
 
 1. **Window Functions and Ranking:**
    - Rank employees based on their 'Monthly Income' within each 'Job Role'. Display their 'Employee Number', 'Job Role', and rank <=10.
@@ -132,7 +131,6 @@ Certainly! Let's dive into more advanced SQL queries based on the dataset column
         FROM EMPLOYEE
         GROUP BY MARITALSTATUS;
 
-   - Unpivot the data to transform columns 'Job Involvement', 'Job Satisfaction', 'Performance Rating', and 'Relationship Satisfaction' into rows.
       --
 4. **Conditional Aggregation and Case Statements:**
    - Calculate the average 'Monthly Income' for employees based on their 'Education Field', grouped into categories ('STEM', 'Business', 'Arts', etc.).
@@ -160,11 +158,5 @@ Certainly! Let's dive into more advanced SQL queries based on the dataset column
       FROM T1
       JOIN T2
         ON T1.JOBROLE = T2.JOBROLE;
-
-5. **Recursive Queries (if applicable):**
-   - If the dataset includes hierarchical data (e.g., manager-subordinate relationships), perform a recursive query to find all employees reporting to a specific manager.
-
-6. **Handling Nulls and Advanced Filtering:**
-   - Identify employees with missing values ('Null') in any critical columns (e.g., 'Monthly Income', 'Years at Company'). Assess the impact on analysis and suggest potential handling strategies.
 
 These advanced queries leverage SQL features such as window functions, subqueries, pivoting, conditional aggregation, and recursive queries where applicable, offering deeper insights and analysis capabilities into the dataset. Adjust the specifics based on your dataset's characteristics and additional requirements.
